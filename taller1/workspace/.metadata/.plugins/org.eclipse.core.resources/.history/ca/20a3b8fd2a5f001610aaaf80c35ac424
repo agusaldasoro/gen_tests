@@ -1,0 +1,38 @@
+package org.autotest;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class TestStackAr {
+
+	@Test
+	public void test() {
+		StackAr a = new StackAr();
+	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void failureTest() {
+		StackAr a = new StackAr(-1);
+	}
+
+	
+	@Test
+	public void sizeTest() {
+		StackAr a = new StackAr();
+		a.size();
+	}
+
+	@Test
+	public void isNotEmptyTest() {
+		StackAr a = new StackAr();
+		assertFalse("El Stack deberìa estar vacìo.", a.isEmpty());
+	}	
+
+	
+	@Test
+	public void isNotEmptyTest() {
+		StackAr a = new StackAr(0);
+		assertFalse("El Stack deberìa estar vacìo.", a.isEmpty());
+	}	
+}

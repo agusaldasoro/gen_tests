@@ -1,0 +1,14 @@
+package org.autotest;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class TestStackAr {
+
+	@Test
+	public void test() {
+		StackAr a = new StackAr;
+	}
+
+}

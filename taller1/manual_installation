@@ -1,0 +1,10 @@
+Option 3: Manual Download and Installation
+For manual installation please download the latest EclEmma release. Unzip the archive into dropins folder of your Eclipse installation and restart Eclipse:
+
+<your eclipse installation>/
++- dropins/
+   +- eclemma-x.y.z/
+      +- plugins/
+      |  +- ...
+      +- feature/
+         +- ...

@@ -113,9 +113,10 @@ public class TestStackAr {
 		a.push(5);
 		a.push(11);
 
-		StackAr b = new StackAr();
 
-		assertFalse("Deberìan ser distinto el hash", b.hashCode() == a.hashCode());
+		int expected = -356533237;
+
+		assertEquals(expected, a.hashCode());
 	}
 
 	@Test

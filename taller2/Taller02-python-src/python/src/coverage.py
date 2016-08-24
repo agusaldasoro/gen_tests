@@ -63,8 +63,18 @@ Reports the branch Coverage
 '''
 class BranchCoverage(Coverage):
     def __init__(self, module_name=None):
-        self.branches_visited = 0
+        self.branches_visited = set()
         pass
     
     def printCoverage(self):
         print("Branch Coverage is " + str(self.get_coverage())+ "%")
+
+    def traceit(self, frame, event, arg):
+        if event == "line" and frame.f_code.co_filename == "/home/aaldasoro/Documentos/gen_tests/taller2/Taller02-python-src/python/src/cgi_decode.py":
+            if frame.f_lineno in self.branches_lines:
+                self.branches_visited.add(frame.f_lineno)
+        return self.traceit
+
+    def get_coverage(self):
+        return 100 * float(len(self.branches_visited)) / self.total_branches
+

@@ -13,13 +13,16 @@ class TestCGIDecode(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        #cls.c = coverage.LineCoverage("cgi_decode")	
-        sys.settrace(cls.c.traceit)
-        #cls.c.total_lines = ej3_line_counter()
-        #cls.c = coverage.BranchCoverage("cgi_decode")
-        cls.c.branch_lines = ej4_branch_counter()
+        cls.c = coverage.LineCoverage("cgi_decode")    
+        cls.c.total_lines = ej3_line_counter()
         sys.settrace(cls.c.traceit)
         cls.c.setUp()
+        # uncomment to check Branch Coverage
+        # cls.c = coverage.BranchCoverage("cgi_decode")
+        # cls.c.total_branches = ej4_branch_counter()
+        # cls.c.branches_lines = ej4_branch_lines()
+        # sys.settrace(cls.c.traceit)
+        # cls.c.setUp()
 
     def test0(self):
         pass
@@ -88,8 +91,14 @@ def ej4_branch_counter():
     v.visit(root)
     return v.branches
 
-#print(ej4_branch_counter())
-#print(ej3_line_counter())
-#ej2_parse_ast()
+def ej4_branch_lines():
+    root = ast.parse(open("cgi_decode.py").read())
+    v = BranchCounter()
+    v.visit(root)
+    return v.branches_lines
+
+print(ej4_branch_counter())
+print(ej3_line_counter())
 ej1_run_tests()
+ej2_parse_ast()
     

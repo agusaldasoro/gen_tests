@@ -1,0 +1,48 @@
+import time
+
+startTime = time.time()
+
+# stdlib imports
+import sys
+
+
+
+class RandPy:
+    def __init__(self):
+        pass
+
+    def generate_tests(self, targetPyFile, maxIterations, maxTime, output_dir, random_seed):
+        # TODO COMPLETAR!
+
+        start = time.time()
+        limit = start + maxTime
+        iteracionesFaltantes = maxIterations
+           
+        tests = list()
+        while(time.time() <= limit and (maxIterations == -1 or iteracionesFaltantes > 0)):
+            t = TestGenerator(self, random_seed)
+            r = t.run()
+            if (True):
+                # aumento branches o lineas
+                tests.append(t)
+                output_dir.append(t)
+                output_dir.append(r)
+
+
+        pass
+    
+if __name__ == "__main__":
+    if len(sys.argv) != 5:
+        print("Usage <targetPyFile> <maxIterations> <maxTime> <outputDir> <randomSeed>")
+        sys.exit()
+    
+    # load the cli arguments
+    targetPyFile = sys.argv[1]
+    maxIterations = int(sys.argv[2])
+    maxTime = float(sys.argv[3])
+    output_dir = sys.argv[4]
+    random_seed = int(sys.argv[5])
+
+    randPy = RandPy()
+    randPy.generate_tests(targetPyFile, maxIterations, maxTime, output_dir, random_seed)
+    

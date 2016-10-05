@@ -64,22 +64,24 @@ public class StackAr {
 	public String toString() {
 <span class="fc" id="L65">		StringBuffer b = new StringBuffer();</span>
 <span class="fc" id="L66">		b.append(&quot;[&quot;);</span>
-<span class="fc" id="L67">		toStringCicle(b);</span>
-<span class="fc" id="L68">		b.append(&quot;]&quot;);</span>
-<span class="fc" id="L69">		return b.toString();</span>
+<span class="fc" id="L67">		int i = 0;</span>
+<span class="fc" id="L68">		loop_inv(this, i, b);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">		while (i&lt;=readIndex) {</span>
+<span class="fc" id="L70">			loop_inv(this, i, b);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">			if (i &gt; 0) {</span>
+<span class="fc" id="L72">				b.append(&quot;,&quot;);</span>
+			}
+<span class="fc" id="L74">			Object o = elems[i];</span>
+<span class="fc" id="L75">			String s = String.valueOf(o);</span>
+<span class="fc" id="L76">			b.append(s);</span>
+<span class="fc" id="L77">			i++;</span>
+<span class="fc" id="L78">			loop_inv(this, i, b);</span>
+<span class="fc" id="L79">		}</span>
+<span class="fc" id="L80">		b.append(&quot;]&quot;);</span>
+<span class="fc" id="L81">		return b.toString();</span>
 	}
 
-	private void toStringCicle(StringBuffer b){
-<span class="fc" id="L73">		int i = 0;</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">		while (i&lt;=readIndex) {</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">			if (i &gt; 0) {</span>
-<span class="fc" id="L76">				b.append(&quot;,&quot;);</span>
-			}
-<span class="fc" id="L78">			Object o = elems[i];</span>
-<span class="fc" id="L79">			String s = String.valueOf(o);</span>
-<span class="fc" id="L80">			b.append(s);</span>
-<span class="fc" id="L81">			i++;</span>
-<span class="fc" id="L82">		}</span>
-<span class="fc" id="L83">	}</span>
+	private void loop_inv(StackAr s, int i, StringBuffer b){
+<span class="fc" id="L85">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

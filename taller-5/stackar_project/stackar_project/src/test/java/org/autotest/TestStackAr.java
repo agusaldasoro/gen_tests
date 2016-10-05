@@ -25,6 +25,7 @@ public class TestStackAr {
 		s.push(o);
 		s.top();
 		s.pop();
+		s.toString();
 	}
 
 	@Test
@@ -128,6 +129,7 @@ public class TestStackAr {
 	@Test (expected = IllegalArgumentException.class)
 	public void failureTest() {
 		StackAr a = new StackAr(-1);
+		a.toString();
 	}
 
 	

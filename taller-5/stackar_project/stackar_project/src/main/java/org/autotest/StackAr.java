@@ -64,14 +64,10 @@ public class StackAr {
 	public String toString() {
 		StringBuffer b = new StringBuffer();
 		b.append("[");
-		toStringCicle(b);
-		b.append("]");
-		return b.toString();
-	}
-
-	private void toStringCicle(StringBuffer b){
 		int i = 0;
+		loop_inv(this, i, b);
 		while (i<=readIndex) {
+			loop_inv(this, i, b);
 			if (i > 0) {
 				b.append(",");
 			}
@@ -79,6 +75,12 @@ public class StackAr {
 			String s = String.valueOf(o);
 			b.append(s);
 			i++;
+			loop_inv(this, i, b);
 		}
+		b.append("]");
+		return b.toString();
+	}
+
+	private void loop_inv(StackAr s, int i, StringBuffer b){
 	}
 }

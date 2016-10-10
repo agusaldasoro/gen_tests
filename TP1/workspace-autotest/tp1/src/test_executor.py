@@ -17,9 +17,9 @@ class TestArgument:
 class TestCall:
 
     """ creates a new test call to function f using the arguments a"""
-    def __init__(self, new_out_dir, test_agument_sequence):
+    def __init__(self, new_out_dir, test_argument_sequence):
         self.function = new_out_dir
-        self.arguments = test_agument_sequence
+        self.arguments = test_argument_sequence
     
     def execute(self, module):
         """Execute this test call with the module under test"""

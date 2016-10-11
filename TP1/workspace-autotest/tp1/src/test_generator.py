@@ -12,6 +12,7 @@ class TestGenerator:
         self.random_seed = random_seed
     
     def generate_new_test_call(self):
+        random.seed(self.random_seed)
         print("Function " + self.module_name.name)
         totals = []
         for argname in self.module_name.argnames:

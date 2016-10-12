@@ -56,7 +56,7 @@ class TotalCoverage(Coverage):
     def traceit(self, frame, event, arg):
         if event == "line" and frame.f_code.co_filename == self.module_name:
             self.lines_visited.add(frame.f_lineno)
-    	    if frame.f_lineno in self.branches_lines:
+            if frame.f_lineno in self.branches_lines:
                 self.branches_visited.add(frame.f_lineno)
         return self.traceit
     

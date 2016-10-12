@@ -9,6 +9,7 @@ import pyntch
 import os
 import test_generator
 import test_executor
+import test_writer
 import coverage 
 import ast
 
@@ -16,56 +17,62 @@ class RandPy:
     def __init__(self):
         pass
 
-
-
     def generate_tests(self, targetPyFile, maxIterations, maxTime, output_dir, random_seed):
         pyntch_wrapper.setup()
         pyFilename = os.getcwd() + targetPyFile
+        outFilename = os.getcwd() + output_dir
         module = pyntch_wrapper.addFile(pyFilename)
         pyntch_wrapper.runAnalysis()
         
         limitTime = time.time() + maxTime
         iterCount = 0
-        line_branch_coverage = 0
         tests = []
         
         total_lines = line_counter(pyFilename)
-        branches_lines = branch_lines(pyFilename)
+        total_branches_lines = branch_lines(pyFilename)
         total_branches = branch_counter(pyFilename)
+  
         lines_visited = set()
         branches_visited = set()   
         
-        while (iterCount < maxIterations and time.time() < limitTime):    
+        while (iterCount < maxIterations and time.time() < limitTime):   
             for f in module.children:
                 if isinstance(f, pyntch.function.FuncType):
+                    # Initialize a new Total Coverage
+                    totalCoverage = coverage.TotalCoverage(pyFilename)    
+                    totalCoverage.total_lines = total_lines
+                    totalCoverage.branches_lines = total_branches_lines
+                    totalCoverage.total_branches = total_branches
+                    
                     g = test_generator.TestGenerator(f,random_seed)
+                    
                     func_tuple = g.generate_new_test_call()
                     testCall = test_executor.TestCall(func_tuple[0], func_tuple[1])
                     testExecutor = test_executor.TestExecutor(pyFilename)
+                    
+                    sys.settrace(totalCoverage.traceit)
                     res = testExecutor.execute(testCall)
+                    sys.settrace(None)
+                    
                     if res is TypeError:
                         continue
-                    testsWithNew = tests
-                    testsWithNew.append(testExecutor)
-                    
-                    totalCoverage = coverage.TotalCoverage(pyFilename)    
-                    totalCoverage.total_lines = line_counter(pyFilename)
-                    totalCoverage.branches_lines = branch_lines(pyFilename)
-                    totalCoverage.total_branches = branch_counter(pyFilename)
-                    sys.settrace(totalCoverage.traceit)
-                    new_lines_visited = lines_visited
-                    new_lines_visited.union(totalCoverage.lines_visited)
-                    new_branches_visited = branches_visited
-                    new_branches_visited.union(totalCoverage.branches_visited)
-                    
+
+                    new_lines_visited = lines_visited.union(totalCoverage.lines_visited)
+                    new_branches_visited = branches_visited.union(totalCoverage.branches_visited)
+
                     if len(new_lines_visited) > len(lines_visited) or len(new_branches_visited) > len(branches_visited):
                         lines_visited = new_lines_visited
                         branches_visited = new_branches_visited
-                        tests.add(testExecutor)
+                        tests.append(testExecutor)
+                        testWriter = test_writer.TestWriter(outFilename, f.name)
+                        testWriter.writeToFile(testCall, iterCount)
             iterCount += 1
-        print("Line Coverage:", 100*len(lines_visited)/total_lines)
-        print("Branch Coverage:", 100*len(branches_visited)/total_branches)
-        return line_branch_coverage
+
+        line_coverage = 100 * float(len(lines_visited))/float(total_lines)
+        print("Line Coverage:", line_coverage)
+        branch_coverage = 100 * float(len(branches_visited))/float(total_branches)
+        print("Branch Coverage:", branch_coverage)
+
 
 class LineCounter(ast.NodeVisitor):
     def __init__(self):
@@ -84,14 +91,22 @@ class BranchCounter(ast.NodeVisitor):
     def visit_If(self, node):
         self.branches += 2
         self.branches_lines.add(node.body[0].lineno)
-        self.branches_lines.add(node.orelse[0].lineno)
+        if len(node.orelse) > 0:
+            self.branches_lines.add(node.orelse[0].lineno)
         self.generic_visit(node)
 
     def visit_While(self, node):
         self.branches += 2
         self.branches_lines.add(node.body[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
         self.generic_visit(node)
 
+    def visit_For(self, node):
+        self.branches += 2
+        self.branches_lines.add(node.body[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
+        self.generic_visit(node)
+        
 def line_counter(pyFilename):
     root = ast.parse(open(pyFilename).read())
     v = LineCounter()

@@ -97,21 +97,19 @@ def random_test_arg(t):
 def random_single_arg(t):
     type_str = str(t) 
     if type_str == "<int>":
-        testArg = TestArgument(type_str, random.randint(-3000,3000))
+        testArg = TestArgument("constant", random.randint(-3000,3000))
     elif type_str == "<bool>":
-        testArg = TestArgument(type_str, bool(random.randint(0, 1)))
+        testArg = TestArgument("constant", bool(random.randint(0, 1)))
     elif type_str == "<float>":
-        testArg = TestArgument(type_str, random.uniform(-1000000, 1000000))
+        testArg = TestArgument("constant", random.uniform(-1000000, 1000000))
     elif type_str == "<long>":
-        testArg = TestArgument(type_str, random.getrandbits(128))
+        testArg = TestArgument("constant", random.getrandbits(128))
     elif type_str == "<basestring>" or type_str=="<unicode>" or type_str=="<str>":
         char_set = string.ascii_uppercase + string.digits
-        testArg = TestArgument(type_str, ''.join(random.sample(char_set*6, 6)))
+        testArg = TestArgument("constant", ''.join(random.sample(char_set*6, 6)))
     else:
         raise Exception("Unknown Pyntch primitive type" + str(t))    
     return testArg
-
-
 
 # PRINT
 def print_pyntch_types(ts):

@@ -3,7 +3,7 @@ Created on Sep 1, 2016
 
 @author: galeotti
 '''
-from math import sqrt
+
 
 def euclidean_dist(p,q):
     if not len(p) == len(q):
@@ -14,7 +14,7 @@ def euclidean_dist(p,q):
         dist = q[i] - p[i]
         sum_value = sum_value + dist * dist 
         
-    return sqrt(sum_value)
+    return sum_value**0.5
 
 
 def __typeHints():

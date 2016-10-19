@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<alloy>
+<instance filename="" command="BinaryTree">
+
+  <sig name="BinaryTree" extends="Object">
+    <atom name="BinaryTree0"/>
+  </sig>
+  <sig name="Int" extends="univ">
+    <atom name="0"/>
+  </sig>
+  <sig name="Object" extends="univ">
+    <atom name="BinaryTree0"/>
+  </sig>
+
+  <field name="size">
+    <type>
+      <sig name="BinaryTree"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="BinaryTree0"/>
+      <atom name="0"/>
+    </tuple>
+  </field>
+
+</instance>
+</alloy>

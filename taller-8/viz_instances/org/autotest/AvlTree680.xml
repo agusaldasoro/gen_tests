@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<alloy>
+<instance filename="" command="AvlTree">
+
+  <sig name="Int" extends="univ">
+    <atom name="4"/>
+    <atom name="3"/>
+    <atom name="3"/>
+    <atom name="4"/>
+    <atom name="2"/>
+    <atom name="0"/>
+    <atom name="1"/>
+    <atom name="2"/>
+    <atom name="0"/>
+  </sig>
+  <sig name="AvlNode" extends="Object">
+    <atom name="AvlNode0"/>
+    <atom name="AvlNode1"/>
+    <atom name="AvlNode2"/>
+    <atom name="AvlNode3"/>
+  </sig>
+  <sig name="Object" extends="univ">
+    <atom name="AvlTree0"/>
+    <atom name="AvlNode0"/>
+    <atom name="AvlNode1"/>
+    <atom name="AvlNode2"/>
+    <atom name="AvlNode3"/>
+  </sig>
+  <sig name="AvlTree" extends="Object">
+    <atom name="AvlTree0"/>
+  </sig>
+
+  <field name="root">
+    <type>
+      <sig name="AvlTree"/>
+      <sig name="AvlNode"/>
+    </type>
+    <tuple>
+      <atom name="AvlTree0"/>
+      <atom name="AvlNode0"/>
+    </tuple>
+  </field>
+  <field name="size">
+    <type>
+      <sig name="AvlTree"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlTree0"/>
+      <atom name="4"/>
+    </tuple>
+  </field>
+  <field name="data">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode0"/>
+      <atom name="3"/>
+    </tuple>
+  </field>
+  <field name="height">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode0"/>
+      <atom name="3"/>
+    </tuple>
+  </field>
+  <field name="right">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="AvlNode"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode0"/>
+      <atom name="AvlNode1"/>
+    </tuple>
+  </field>
+  <field name="data">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode1"/>
+      <atom name="4"/>
+    </tuple>
+  </field>
+  <field name="height">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode1"/>
+      <atom name="2"/>
+    </tuple>
+  </field>
+  <field name="left">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="AvlNode"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode1"/>
+      <atom name="AvlNode2"/>
+    </tuple>
+  </field>
+  <field name="data">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode2"/>
+      <atom name="0"/>
+    </tuple>
+  </field>
+  <field name="height">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode2"/>
+      <atom name="1"/>
+    </tuple>
+  </field>
+  <field name="right">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="AvlNode"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode2"/>
+      <atom name="AvlNode3"/>
+    </tuple>
+  </field>
+  <field name="data">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode3"/>
+      <atom name="2"/>
+    </tuple>
+  </field>
+  <field name="height">
+    <type>
+      <sig name="AvlNode"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlNode3"/>
+      <atom name="0"/>
+    </tuple>
+  </field>
+
+</instance>
+</alloy>

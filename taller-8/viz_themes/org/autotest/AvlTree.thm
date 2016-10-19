@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<alloy>
+<view useOriginalAtomNames="yes">
+
+<defaultnode/>
+<defaultedge/>
+
+<node visible="no">
+  <type name="Int"/>
+</node>
+<node shape="Ellipse" color="Green">
+  <type name="AvlNode"/>
+</node>
+<node shape="Circle" color="Red">
+  <type name="Object"/>
+</node>
+<node shape="Hexagon" color="Blue">
+  <type name="AvlTree"/>
+</node>
+
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="size">
+      <type name="AvlTree"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="data">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="height">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="data">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="height">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="data">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="height">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="data">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+<edge visible="no" merge="no" attribute="yes">
+  <relation name="height">
+      <type name="AvlNode"/>
+      <type name="Int"/>
+  </relation>
+</edge>
+
+</view>
+</alloy>

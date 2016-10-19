@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<alloy>
+<instance filename="" command="AvlTree">
+
+  <sig name="Int" extends="univ">
+    <atom name="0"/>
+  </sig>
+  <sig name="Object" extends="univ">
+    <atom name="AvlTree0"/>
+  </sig>
+  <sig name="AvlTree" extends="Object">
+    <atom name="AvlTree0"/>
+  </sig>
+
+  <field name="size">
+    <type>
+      <sig name="AvlTree"/>
+      <sig name="Int"/>
+    </type>
+    <tuple>
+      <atom name="AvlTree0"/>
+      <atom name="0"/>
+    </tuple>
+  </field>
+
+</instance>
+</alloy>

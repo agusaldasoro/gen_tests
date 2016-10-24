@@ -1,10 +1,10 @@
-from __typeHints import *
+from array_avg import *
 import unittest
 
 class Test(unittest.TestCase):
 
 	def test1(self):
-		__typeHints()
+		array_avg(-1352)
 
 if __name__ == '__main__':
 	unittest.main()

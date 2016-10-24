@@ -27,6 +27,7 @@ hex_values = {
 def cgi_decode(s):
     t = ""
     i = 0
+    print("aca:" ,s)
     while i < len(s):
         c = s[i]
         if c == '+':

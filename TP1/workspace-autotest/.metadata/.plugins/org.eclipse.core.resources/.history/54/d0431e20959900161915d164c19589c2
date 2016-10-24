@@ -1,0 +1,146 @@
+import time
+
+startTime = time.time()
+
+# stdlib imports
+import sys
+import pyntch_wrapper
+import pyntch
+import os
+import test_generator
+import test_executor
+import test_writer
+import coverage 
+import ast
+import random
+
+class RandPy:
+    def __init__(self):
+        pass
+
+    def generate_tests(self, targetPyFile, maxIterations, maxTime, output_dir, random_seed):
+        pyntch_wrapper.setup()
+        pyFilename = os.getcwd() + targetPyFile
+        outFilename = os.getcwd() + output_dir
+        module = pyntch_wrapper.addFile(pyFilename)
+        pyntch_wrapper.runAnalysis()
+        
+        limitTime = time.time() + maxTime
+        iterCount = 0
+        tests = []
+        
+        total_lines = line_counter(pyFilename)
+        total_branches_lines = branch_lines(pyFilename)
+        total_branches = branch_counter(pyFilename)
+  
+        lines_visited = set()
+        branches_visited = set()   
+        
+        #random.seed(random_seed)
+        
+        while (iterCount < maxIterations and time.time() < limitTime):   
+            for f in module.children:
+                if isinstance(f, pyntch.function.FuncType) and f.name[0] != "_":
+                    # Initialize a new Total Coverage
+                    totalCoverage = coverage.TotalCoverage(pyFilename)    
+                    totalCoverage.total_lines = total_lines
+                    totalCoverage.branches_lines = total_branches_lines
+                    totalCoverage.total_branches = total_branches
+                    
+                    g = test_generator.TestGenerator(f,random_seed)
+                    
+                    func_tuple = g.generate_new_test_call()
+                    testCall = test_executor.TestCall(func_tuple[0], func_tuple[1])
+                    testExecutor = test_executor.TestExecutor(pyFilename)
+                    
+                    sys.settrace(totalCoverage.traceit)
+                    res = testExecutor.execute(testCall)
+                    sys.settrace(None)
+                    
+                    if res is TypeError:
+                        continue
+
+                    new_lines_visited = lines_visited.union(totalCoverage.lines_visited)
+                    new_branches_visited = branches_visited.union(totalCoverage.branches_visited)
+
+                    if len(new_lines_visited) > len(lines_visited) or len(new_branches_visited) > len(branches_visited):
+                        lines_visited = new_lines_visited
+                        branches_visited = new_branches_visited
+                        tests.append(testExecutor)
+                        testWriter = test_writer.TestWriter(outFilename, f.name)
+                        testWriter.writeToFile(testCall, iterCount)
+            iterCount += 1
+
+        line_coverage = 100 * float(len(lines_visited))/float(total_lines)
+        print("Line Coverage:", line_coverage)
+        print(total_branches)
+        branch_coverage = 100 * float(len(branches_visited))/float(total_branches)
+        print("Branch Coverage:", branch_coverage)
+
+
+class LineCounter(ast.NodeVisitor):
+    def __init__(self):
+        self.lines = set()
+
+    def generic_visit(self, node):
+        if hasattr(node, "lineno"):
+            self.lines.add(node.lineno)
+        ast.NodeVisitor.generic_visit(self, node)
+
+class BranchCounter(ast.NodeVisitor):
+    def __init__(self):
+        self.branches = 0
+        self.branches_lines = set()
+
+    def visit_If(self, node):
+        self.branches += 2
+        self.branches_lines.add(node.body[0].lineno)
+        if len(node.orelse) > 0:
+            self.branches_lines.add(node.orelse[0].lineno)
+        self.generic_visit(node)
+
+    def visit_While(self, node):
+        self.branches += 2
+        self.branches_lines.add(node.body[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
+        self.generic_visit(node)
+
+    def visit_For(self, node):
+        self.branches += 2
+        self.branches_lines.add(node.body[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
+        self.generic_visit(node)
+        
+def line_counter(pyFilename):
+    root = ast.parse(open(pyFilename).read())
+    v = LineCounter()
+    v.visit(root)
+    return len(v.lines)
+
+def branch_counter(pyFilename):
+    root = ast.parse(open(pyFilename).read())
+    v = BranchCounter()
+    v.visit(root)
+    return v.branches
+
+def branch_lines(pyFilename):
+    root = ast.parse(open(pyFilename).read())
+    v = BranchCounter()
+    v.visit(root)
+    return v.branches_lines
+
+if __name__ == "__main__":
+    if len(sys.argv) != 6:
+        print("Usage <targetPyFile> <maxIterations> <maxTime> <outputDir> <randomSeed>")
+        sys.exit()
+    
+    # load the cli arguments
+    targetPyFile = sys.argv[1]
+    maxIterations = int(sys.argv[2])
+    maxTime = float(sys.argv[3])
+    output_dir = sys.argv[4]
+    random_seed = int(sys.argv[5])
+
+    randPy = RandPy()
+    randPy.generate_tests(targetPyFile, maxIterations, maxTime, output_dir, random_seed)
+    

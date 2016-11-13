@@ -36,7 +36,7 @@ class RandPy:
         lines_visited = set()
         branches_visited = set()   
         
-        #random.seed(random_seed)
+        random.seed(random_seed)
         
         while (iterCount < maxIterations and time.time() < limitTime):   
             for f in module.children:
@@ -62,8 +62,6 @@ class RandPy:
 
                     new_lines_visited = lines_visited.union(totalCoverage.lines_visited)
                     new_branches_visited = branches_visited.union(totalCoverage.branches_visited)
-                    print(totalCoverage.lines_visited)
-                    print(total_branches_lines)
 
                     if len(new_lines_visited) > len(lines_visited) or len(new_branches_visited) > len(branches_visited):
                         lines_visited = new_lines_visited
@@ -75,7 +73,6 @@ class RandPy:
 
         line_coverage = 100 * float(len(lines_visited))/float(total_lines)
         print("Line Coverage:", line_coverage)
-        print(total_branches)
         branch_coverage = 100 * float(len(branches_visited))/float(total_branches)
         print("Branch Coverage:", branch_coverage)
 

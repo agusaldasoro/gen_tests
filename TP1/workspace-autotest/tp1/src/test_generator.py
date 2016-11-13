@@ -21,11 +21,11 @@ class TestGenerator:
             print("  argType: " + types_str)
             types_str = obtain_types(argTypes)
             totals.append(types_str)
-        print(totals)
         return (self.module_name, totals)
 
-# Asumo que devuelve un solo tipo por argumento
+# Asuming that it has only one element
 def obtain_types(ts):
+    # Just in case that the pyntch wrapper wasnt good
     if len(ts) == 0:
         t = "<int>"
     else:

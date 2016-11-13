@@ -1,0 +1,150 @@
+import pyntch
+import random
+import string
+from test_executor import TestArgument
+class NoValue(Exception):
+    pass
+
+class TestGenerator:
+    
+    def __init__(self, module_name, random_seed):
+        self.module_name = module_name
+        self.random_seed = random_seed
+    
+    def generate_new_test_call(self):
+        print("Function " + self.module_name.name)
+        totals = []
+        for argname in self.module_name.argnames:
+            print("  argName:" + argname)
+            argTypes = self.module_name.space[argname].types
+            types_str = print_pyntch_types(argTypes)
+            print("  argType: " + types_str)
+            types_str = obtain_types(argTypes)
+            totals.append(types_str)
+        print(totals)
+        return (self.module_name, totals)
+
+# Asumo que devuelve un solo tipo por argumento
+def obtain_types(ts):
+    char_set = string.ascii_uppercase + string.digits
+    testArg = TestArgument("constant", "GIKA")
+    return testArg
+
+def generate_list(ts):
+    if len(ts) == 0:
+        t = "<int>"
+    else:
+        t = ts.pop()
+    random_size = random.randint(0, 100)
+    res = []
+    for _ in range(random_size):
+        res.append(random_test_arg(t))
+    return res
+
+def generate_set(ts):
+    if len(ts) == 0:
+        t = "<int>"
+    else:
+        t = ts.pop()
+    random_size = random.randint(0, 100)
+    res = set()
+    for _ in range(random_size):
+        res.add(random_test_arg(t))
+    return res
+
+def generate_tuple(ts):
+    res = ()
+    for t in ts:
+        insert = (random_test_arg(t),)
+        res = res + insert
+    return res
+
+def generate_dict(kts, vts):
+    if len(kts) == 0:
+        k = "<int>"
+    else:
+        k = kts.pop()
+    if len(vts) == 0:
+        v = "<int>"
+    else:
+        v = vts.pop()
+    random_size = random.randint(0, 100)
+    res = {}
+    for _ in range(random_size):
+        res[random_test_arg(k)] = random_test_arg(v)
+    return res
+
+def random_test_arg(t):
+    if isinstance(t, pyntch.aggregate_types.ListObject):
+        elem_types = t.elemall.types
+        return generate_list(elem_types)
+    elif isinstance(t, pyntch.aggregate_types.DictObject):
+        key_types = t.key.types
+        value_types = t.value.types
+        return generate_dict(key_types, value_types)
+    elif isinstance(t, pyntch.aggregate_types.TupleObject):
+        elem_types = t.elemall.types
+        return generate_tuple(elem_types)
+    elif isinstance(t, pyntch.aggregate_types.SetObject):
+        elem_types = t.elemall.types
+        return generate_set(elem_types)
+    else:
+        return random_single_arg(t)
+
+def random_single_arg(t):
+    type_str = str(t) 
+    if type_str == "<int>":
+        testArg = TestArgument("constant", random.randint(0,100))
+    elif type_str == "<bool>":
+        testArg = TestArgument("constant", bool(random.randint(0, 1)))
+    elif type_str == "<float>":
+        testArg = TestArgument("constant", random.uniform(-1000000, 1000000))
+    elif type_str == "<long>":
+        testArg = TestArgument("constant", random.getrandbits(128))
+    elif type_str == "<basestring>" or type_str=="<unicode>" or type_str=="<str>":
+        char_set = string.ascii_uppercase + string.digits
+        testArg = TestArgument("constant", ''.join(random.sample(char_set*6, 6)))
+    else:
+        raise Exception("Unknown Pyntch primitive type" + str(t))    
+    return testArg
+
+# PRINT
+def print_pyntch_types(ts):
+    type_str = "["
+    for t in ts:
+        if not type_str == "[":
+            type_str += ","
+        type_str += print_pyntch_type(t)
+    type_str += "]"
+    return type_str
+
+def print_pyntch_type(t):
+    if isinstance(t, pyntch.aggregate_types.ListObject):
+        elem_types = t.elemall.types
+        return "list" + print_pyntch_types(elem_types) 
+    elif isinstance(t, pyntch.aggregate_types.DictObject):
+        key_types = t.key.types
+        value_types = t.value.types
+        key_types_str = print_pyntch_types(key_types)
+        value_types_str = print_pyntch_types(value_types)
+        return "dict(" + key_types_str + "->" + value_types_str + ")"
+    elif isinstance(t, pyntch.aggregate_types.TupleObject):
+        elem_types = t.elemall.types
+        return "tuple" + print_pyntch_types(elem_types)
+    elif isinstance(t, pyntch.aggregate_types.SetObject):
+        elem_types = t.elemall.types
+        return "set" + print_pyntch_types(elem_types) 
+    else:
+        type_str = str(t) 
+        if type_str == "<int>":
+            return "<int>"
+        elif type_str == "<bool>":
+            return "<bool>"
+        elif type_str == "<float>":
+            return "<float>"
+        elif type_str == "<long>":
+            return "<long>"
+        elif type_str == "<basestring>" or type_str=="<unicode>" or type_str=="<str>":
+            return type_str
+        else:
+            raise Exception("Unknown Pyntch primitive type" + str(t))

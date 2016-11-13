@@ -32,23 +32,26 @@ def cgi_decode(s):
         c = s[i]
         if c == '+':
             t = t + ' '
-        elif c == '%':
-            digit_high = s[i + 1]
-            digit_low  = s[i + 2]
-            i = i + 2
-            if (hex_values.has_key(digit_high) and 
-                hex_values.has_key(digit_low)):
-                v = hex_values[digit_high] * 16 + hex_values[digit_low]
-                t = t + chr(v)
-            else:
-                raise ValueError("The string " + s + " is not a valid cgi string")
         else:
-            t = t + c
+            if c == '%':
+                digit_high = s[i + 1]
+                digit_low  = s[i + 2]
+                i = i + 2
+                if (hex_values.has_key(digit_high) and 
+                    hex_values.has_key(digit_low)):
+                    v = hex_values[digit_high] * 16 + hex_values[digit_low]
+                    t = t + chr(v)
+                else:
+                    raise ValueError("The string " + s + " is not a valid cgi string")
+            else:
+                t = t + c
         i = i + 1
     return t
 
 def __typeHints():
     cgi_decode("")
+    cgi_decode("")
+    cgi_decode("%H%e%l%l%o% %World")
     cgi_decode("Hello World")
     cgi_decode("+")
     cgi_decode("%")

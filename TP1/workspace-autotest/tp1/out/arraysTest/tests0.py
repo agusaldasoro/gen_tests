@@ -1,10 +1,10 @@
-from checkBinom import *
+from euclidean_dist import *
 import unittest
 
 class Test(unittest.TestCase):
 
 	def test0(self):
-		checkBinom(28, 66, 63)
+		euclidean_dist(17, 88)
 
 if __name__ == '__main__':
 	unittest.main()

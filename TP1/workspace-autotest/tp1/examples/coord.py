@@ -17,5 +17,6 @@ def euclidean_dist(p,q):
 
 def __typeHints():
     euclidean_dist((0),(0))
+    euclidean_dist((30),(75))
     euclidean_dist((0,0),(0,0))
     euclidean_dist((0,0,0),(0,0,0))

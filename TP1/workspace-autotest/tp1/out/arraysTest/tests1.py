@@ -1,10 +1,10 @@
-from addToList import *
+from oldest import *
 import unittest
 
 class Test(unittest.TestCase):
 
 	def test1(self):
-		addToList(80)
+		oldest(17)
 
 if __name__ == '__main__':
 	unittest.main()

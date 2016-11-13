@@ -2133,3 +2133,39 @@ java.nio.file.NoSuchFileException: /home/agustina/Documentos/UBA/gen_tests/TP1/w
 	at org.python.pydev.parser.PyParser.reparseDocument(PyParser.java:1)
 	at org.python.pydev.shared_core.parsing.ParserScheduler.reparseDocument(ParserScheduler.java:162)
 	at org.python.pydev.shared_core.parsing.ParsingThread.run(ParsingThread.java:54)
+!SESSION 2016-11-13 12:48:20.540 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_77
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=es_ES
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.python.pydev.shared_core 4 4 2016-11-13 13:10:35.968
+!MESSAGE Unable to read contents from: /home/agustina/Documentos/UBA/gen_tests/TP1/workspace-autotest/.metadata/.plugins/org.python.pydev/v1_bm109oo8jsa5gnqmc06ekl12p/shell/__b_cutk4v7af1xg0o5696qq4c0md.top
+!STACK 0
+java.io.EOFException
+	at java.util.zip.GZIPInputStream.readUByte(GZIPInputStream.java:268)
+	at java.util.zip.GZIPInputStream.readUShort(GZIPInputStream.java:258)
+	at java.util.zip.GZIPInputStream.readHeader(GZIPInputStream.java:164)
+	at java.util.zip.GZIPInputStream.<init>(GZIPInputStream.java:79)
+	at java.util.zip.GZIPInputStream.<init>(GZIPInputStream.java:91)
+	at org.python.pydev.editor.codecompletion.revisited.modules.CompiledModule.getCached(CompiledModule.java:296)
+	at org.python.pydev.editor.codecompletion.revisited.modules.CompiledModule.<init>(CompiledModule.java:149)
+	at org.python.pydev.editor.codecompletion.revisited.SystemModulesManager.getBuiltinModule(SystemModulesManager.java:337)
+	at org.python.pydev.editor.codecompletion.revisited.SystemModulesManager.getBuiltinModule(SystemModulesManager.java:1)
+	at org.python.pydev.editor.codecompletion.revisited.ProjectModulesManager.getModuleAndRelatedModulesManager(ProjectModulesManager.java:201)
+	at org.python.pydev.editor.codecompletion.revisited.ProjectModulesManager.getModule(ProjectModulesManager.java:180)
+	at org.python.pydev.editor.codecompletion.revisited.AbstractASTManager.getModule(AbstractASTManager.java:460)
+	at org.python.pydev.editor.codecompletion.revisited.modules.SourceModule.findGlobalTokDef(SourceModule.java:1081)
+	at org.python.pydev.editor.codecompletion.revisited.modules.SourceModule.findDefinitionsFromModAndTok(SourceModule.java:971)
+	at org.python.pydev.editor.codecompletion.revisited.modules.SourceModule.findDefinition(SourceModule.java:953)
+	at org.python.pydev.editor.codecompletion.revisited.modules.SourceModule.findDefinition(SourceModule.java:666)
+	at org.python.pydev.editor.codecompletion.revisited.modules.SourceModule.findDefinition(SourceModule.java:1)
+	at org.python.pydev.editor.refactoring.PyRefactoringFindDefinition.findActualDefinition(PyRefactoringFindDefinition.java:182)
+	at org.python.pydev.editor.refactoring.PyRefactoringFindDefinition.findActualDefinition(PyRefactoringFindDefinition.java:81)
+	at com.python.pydev.refactoring.refactorer.RefactorerFindDefinition.findDefinition(RefactorerFindDefinition.java:63)
+	at com.python.pydev.refactoring.refactorer.Refactorer.findDefinition(Refactorer.java:119)
+	at com.python.pydev.refactoring.wizards.rename.PyReferenceSearcher.prepareSearch(PyReferenceSearcher.java:110)
+	at com.python.pydev.refactoring.markoccurrences.MarkOccurrencesJob.createRequest(MarkOccurrencesJob.java:147)
+	at org.python.pydev.shared_ui.mark_occurrences.BaseMarkOccurrencesJob.run(BaseMarkOccurrencesJob.java:168)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)

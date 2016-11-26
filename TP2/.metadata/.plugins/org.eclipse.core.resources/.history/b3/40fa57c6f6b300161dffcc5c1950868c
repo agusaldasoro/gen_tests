@@ -1,0 +1,276 @@
+import time
+from reportlab.graphics.charts.utils import pairFixNones
+
+startTime = time.time()
+
+# stdlib imports
+import sys
+import pyntch_wrapper
+import pyntch
+import os
+import test_generator
+import test_executor
+import test_writer
+import coverage 
+import ast
+import random
+
+
+populationSize = 50
+eliteSize = 1
+testSuiteLength= 40
+crossoverProbability=0.75
+mutationProbability=0.75
+addNewTestProbability=0.33
+modifyExistingTestProbability=0.33
+removeExistingTestProbability=0.33
+
+class EvoPy:
+    def __init__(self):
+        pass
+
+
+    def generate_tests(self, targetPyFile, maxGenerations, maxTime, output_dir, random_seed):
+
+        def mutate(p1_p2):
+            p1 = p1_p2[0]
+            p2 = p1_p2[1]
+            coin = random.random()
+            if (coin <= addNewTestProbability):
+                p1 = add_test(p1)
+            coin = random.random()
+            if (coin <= addNewTestProbability):
+                p2 = add_test(p2)
+                
+            coin = random.random()
+            if (coin <= modifyExistingTestProbability):
+                p1 = modify_test(p1)
+            coin = random.random()
+            if (coin <= modifyExistingTestProbability):
+                p2 = modify_test(p2)
+                
+            coin = random.random()
+            if (coin <= removeExistingTestProbability):
+                p1 = remove_test(p1)
+            coin = random.random()
+            if (coin <= removeExistingTestProbability):
+                p2 = remove_test(p2)
+                
+            return (p1, p2)
+        
+        def add_test(p):
+            return p
+
+        def remove_test(p):
+            index = int(random.uniform(0, len(p)))
+            return p.pop(index)
+                
+        def modify_test(p):
+            index = int(random.uniform(0, len(p)))
+            return p
+        
+        def crossover(p1, p2):
+            return (p1, p2)
+        
+        def len_best_individual(pyFileName, total_lines, total_branches, testExecutor, population):
+            min_fitness1 = fitness(pyFileName, total_lines, total_branches, testExecutor, population[0])
+            testSuite1 = 0
+            for i in range(0,len(population)):
+                current_fitness = fitness(pyFileName, total_lines, total_branches, testExecutor, population[i])
+                if current_fitness < min_fitness1:
+                    min_fitness1 = current_fitness
+                    testSuite1 = i
+            return population[testSuite1].count('\n')
+        
+        # As I only will take into account the two best directly return the rank_selection
+        def select_elite(pyFileName, total_lines, total_branches, testExecutor, testSuites):
+            pair = rank_selection(pyFileName, total_lines, total_branches, testExecutor, testSuites)
+            res = []
+            res.append(pair[0])
+            res.append(pair[1])
+            return res
+        
+        # Pre: len(testSuites) >= 2
+        def rank_selection(pyFileName, total_lines, total_branches, testExecutor, testSuites):
+            min_fitness1 = fitness(pyFileName, total_lines, total_branches, testExecutor, testSuites[0])
+            testSuite1 = 0
+            for i in range(0,len(testSuites)):
+                current_fitness = fitness(pyFileName, total_lines, total_branches, testExecutor, testSuites[i])
+                if current_fitness < min_fitness1:
+                    min_fitness1 = current_fitness
+                    testSuite1 = i
+            if testSuite1 == 0:
+                testSuite2 = 1
+            else:
+                testSuite2 = 0
+            min_fitness2 = fitness(pyFileName, total_lines, total_branches, testExecutor, testSuites[testSuite2])
+            for i in range(0,len(testSuites)):
+                if i == testSuite1:
+                    continue
+                current_fitness = fitness(pyFileName, total_lines, total_branches, testExecutor, testSuites[i])
+                if current_fitness < min_fitness2:
+                    min_fitness2 = current_fitness
+                    testSuite2 = i
+            return (testSuites[testSuite1], testSuites[testSuite2])
+        
+        def fitness(pyFileName, total_lines, total_branches, testExecutor, testSuite):
+            lines_visited = set()
+            branches_visited = set()   
+            for test_case in testSuite:
+                totalCoverage = coverage.TotalCoverage(pyFilename)    
+                totalCoverage.total_lines = total_lines
+                totalCoverage.branches_lines = total_branches_lines
+                totalCoverage.total_branches = total_branches
+                sys.settrace(totalCoverage.traceit)
+                res = testExecutor.execute(testCall)
+                sys.settrace(None)
+                
+                new_lines_visited = lines_visited.union(totalCoverage.lines_visited)
+                new_branches_visited = branches_visited.union(totalCoverage.branches_visited)
+            
+            return total_lines + total_branches - len(lines_visited) - len(branches_visited)
+    
+
+        pyntch_wrapper.setup()
+        pyFilename = os.getcwd() + targetPyFile
+        outFilename = os.getcwd() + output_dir
+        module = pyntch_wrapper.addFile(pyFilename)
+        pyntch_wrapper.runAnalysis()
+        
+        total_lines = line_counter(pyFilename)
+        total_branches_lines = branch_lines(pyFilename)
+        total_branches = branch_counter(pyFilename)
+        testExecutor = test_executor.TestExecutor(pyFilename)
+                        
+        lines_visited = set()
+        branches_visited = set()   
+        
+        random.seed(random_seed)
+          
+        iterCount = 0
+        current_population = []
+              
+        # RANDOM TESTING
+        maxIterations = 100
+        while (iterCount < maxIterations):  
+            test_suite =  []
+            maxIterations = 10
+            iterCount2 = 0
+            while (iterCount2 < maxIterations):
+                for f in module.children:
+                    if isinstance(f, pyntch.function.FuncType) and f.name[0] != "_":
+                        g = test_generator.TestGenerator(f,random_seed)
+                        func_tuple = g.generate_new_test_call()
+                        testCall = test_executor.TestCall(func_tuple[0], func_tuple[1])
+                        test_suite.append(testCall)
+                iterCount2 += 1
+            current_population.append(test_suite)
+            iterCount += 1
+
+        limitTime = time.time() + maxTime
+        while (time.time() < limitTime):
+            Z = select_elite(pyFilename, total_lines, total_branches, testExecutor, current_population)
+            while(len(Z) < len(current_population)):
+                parents = rank_selection(pyFilename, total_lines, total_branches, testExecutor, Z)
+                p1 = parents[0]
+                p2 = parents[1]
+                crossover_probability = random.random()
+                if (crossover_probability <= crossoverProbability):
+                    o1_o2 = crossover(p1, p2)
+                else:
+                    o1_o2 = (p1, p2)
+                
+                o1_o2 = mutate(o1_o2)
+                o1 = o1_o2[0]
+                o2 = o1_o2[1]
+                
+                fitnessP1 = (pyFilename, total_lines, total_branches, testExecutor, p1)
+                fitnessP2 = (pyFilename, total_lines, total_branches, testExecutor, p2)
+                fitnessO1 = (pyFilename, total_lines, total_branches, testExecutor, o1)
+                fitnessO2 = (pyFilename, total_lines, total_branches, testExecutor, o2)
+                
+                fp = min(fitnessP1, fitnessP2)
+                fo = min(fitnessO1, fitnessO1)
+                
+                lp = p1.toCode.count('\n') + p2.toCode.count('\n')
+                lo = o1.toCode.count('\n') + o2.toCode.count('\n')
+                
+                lenTb = len_best_individual(pyFilename, total_lines, total_branches, testExecutor, current_population)
+                
+                if (fo < fp or (fo == fp and lo <= lp)):
+                    if (len(o1)<= 2 * lenTb):
+                        Z.append(o1)
+                    if (len(o2)<= 2 * lenTb):
+                        Z.append(o2)
+            
+            current_population = Z
+    
+
+class LineCounter(ast.NodeVisitor):
+    def __init__(self):
+        self.lines = set()
+
+    def generic_visit(self, node):
+        if hasattr(node, "lineno"):
+            self.lines.add(node.lineno)
+        ast.NodeVisitor.generic_visit(self, node)
+
+class BranchCounter(ast.NodeVisitor):
+    def __init__(self):
+        self.branches = 0
+        self.branches_lines = set()
+
+    def visit_If(self, node):
+        self.branches += 2
+        self.branches_lines.add(node.body[0].lineno)
+        if len(node.orelse) > 0:
+            self.branches_lines.add(node.orelse[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
+        self.generic_visit(node)
+
+    def visit_While(self, node):
+        self.branches += 2
+        print(node.body[-1].lineno + 1)
+        self.branches_lines.add(node.body[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
+        self.generic_visit(node)
+
+    def visit_For(self, node):
+        self.branches += 2
+        self.branches_lines.add(node.body[0].lineno)
+        self.branches_lines.add(node.body[-1].lineno + 1)
+        self.generic_visit(node)
+        
+def line_counter(pyFilename):
+    root = ast.parse(open(pyFilename).read())
+    v = LineCounter()
+    v.visit(root)
+    return len(v.lines)
+
+def branch_counter(pyFilename):
+    root = ast.parse(open(pyFilename).read())
+    v = BranchCounter()
+    v.visit(root)
+    return v.branches
+
+def branch_lines(pyFilename):
+    root = ast.parse(open(pyFilename).read())
+    v = BranchCounter()
+    v.visit(root)
+    return v.branches_lines
+  
+if __name__ == "__main__":
+    if len(sys.argv) != 6:
+        print("Usage <targetPyFile> <maxGenerations> <maxTime> <outputDir> <randomSeed>")
+        sys.exit()
+    
+    # load the cli arguments
+    targetPyFile = sys.argv[1]
+    maxGenerations = int(sys.argv[2])
+    maxTime = float(sys.argv[3])
+    output_dir = sys.argv[4]
+    random_seed = int(sys.argv[5])
+
+    evoPy = EvoPy()
+    evoPy.generate_tests(targetPyFile, maxGenerations, maxTime, output_dir, random_seed)
+    

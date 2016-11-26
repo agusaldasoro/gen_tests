@@ -1,0 +1,99 @@
+import imp, os, inspect
+
+class TestArgument:
+
+    def __init__(self, ty, v):
+        self.argType = ty
+        self.argValue = v
+        
+    def modify_arg(self, v):
+        self.argValue = v
+        
+    def __str__(self):
+        return "TestArgument(" + self.argType + "," + str(self.argValue) + ")"
+    
+    def __repr__(self):
+        return self.__str__()
+
+    
+"""Represents an invocation to a function (no callee)"""
+class TestCall:
+
+    """ creates a new test call to function f using the arguments a"""
+    def __init__(self, new_out_dir, test_agument_sequence):
+        self.function = new_out_dir
+        self.arguments = test_agument_sequence
+        
+    def args(self):
+        return self.arguments
+    
+    def execute(self, module):
+        """Execute this test call with the module under test"""
+        # get the source code for this test call
+        code = self.toCode()
+        # create a global context, we need the module under test
+        gls = {}
+        for name, value in inspect.getmembers(module):
+            gls[name] = value
+        # evaluate
+        return eval(code, gls)
+    
+    @classmethod
+    def interpret(cls, arg):
+        ty = arg.argType
+        a = arg.argValue
+        if ty == "constant":
+            return str(a)
+        if ty == "list":
+            return "".join(["[", ", ".join(map(TestCall.interpret, a)) , "]"])
+        if ty == "dict":
+            pairs = []
+            for k, v in zip(a[0], a[1]):
+                pairs.append(":".join([TestCall.interpret(k), TestCall.interpret(v)]))
+            return "{" + ", ".join(pairs) + "}"
+        if ty == "tuple":
+            return "".join(["(", ", ".join(map(TestCall.interpret, a)) , ")"])
+        if ty == "set":
+            return "".join(["set([", ", ".join(map(TestCall.interpret, a)) , "])"])
+        
+        raise AssertionError("unknown type: " + ty)
+
+
+    
+    """Generate python code for this test"""
+    def toCode(self):
+        args = ""
+        for arg in self.arguments:
+            if not args == "":
+                args += ", "
+            args += TestCall.interpret(arg)
+        
+        code = "".join([self.function.name, "(", args, ")"])
+        return code
+        
+    def __str__(self):
+        return self.toCode()
+    
+    def __repr__(self):
+        return self.__str__()
+
+class TestExecutor:
+    """Executes a test sequence and provides the value """
+    def __init__(self, moduleFile):
+        (name, _) = os.path.splitext(os.path.basename(moduleFile))
+        f, path, desc = imp.find_module(name, [os.path.dirname(moduleFile)])
+        self.module = imp.load_module(name, f, path, desc)
+        f.close()
+    
+
+    """The execution err_code could be Invalid, Failed, or Success"""
+    def execute(self, test_call):
+        try:
+            test_call.execute(self.module)
+        
+        except TypeError:  # wrong type, this may be a bug, but most likely it is a wrong type
+            return 'TypeError'
+        except:
+            return 'Exception'
+        
+        return 'OK'
